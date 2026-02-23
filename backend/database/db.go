@@ -48,10 +48,14 @@ func seedData() {
 	DB.Model(&models.Item{}).Count(&count)
 	if count == 0 {
 		items := []models.Item{
-			{Name: "Margherita Pizza", Description: "Classic tomato and mozzarella", Price: 12.99, ImageURL: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=800&q=80"},
-			{Name: "Pepperoni Pizza", Description: "Double pepperoni with extra cheese", Price: 14.99, ImageURL: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=800&q=80"},
-			{Name: "Veggie Burger", Description: "Plant-based patty with fresh greens", Price: 10.99, ImageURL: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80"},
-			{Name: "Grilled Chicken Salad", Description: "Organic chicken with honey mustard", Price: 11.99, ImageURL: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Margherita Pizza", Description: "Classic tomato and mozzarella - Veg", Price: 299, ImageURL: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Pepperoni Pizza", Description: "Double pepperoni with extra cheese", Price: 499, ImageURL: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Veggie Burger", Description: "Plant-based patty with fresh greens - Veg", Price: 199, ImageURL: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Grilled Chicken Salad", Description: "Organic chicken with honey mustard", Price: 349, ImageURL: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Paneer Tikka", Description: "Spiced cottage cheese cubes grilled - Veg", Price: 250, ImageURL: "https://images.unsplash.com/photo-1567184109411-47a7a3946d2f?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Butter Chicken", Description: "Creamy tomato based chicken curry", Price: 450, ImageURL: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Masala Dosa", Description: "Crispy crepe with potato filling - Veg", Price: 120, ImageURL: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80"},
+			{Name: "Chicken Biryani", Description: "Aromatic rice dish with spicy chicken", Price: 399, ImageURL: "https://images.unsplash.com/photo-1563379091339-03b21bc4a6f8?auto=format&fit=crop&w=800&q=80"},
 		}
 		DB.Create(&items)
 	}

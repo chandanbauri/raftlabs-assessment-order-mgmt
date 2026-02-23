@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Basis+Grotesque+Pro:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Lexend:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,7 +7,7 @@
 @layer base {
   body {
     @apply bg-white text-swiggy-dark antialiased;
-    font-family: 'Basis Grotesque Pro', sans-serif;
+    font-family: 'Lexend', sans-serif;
   }
 }
 
@@ -20,8 +20,8 @@
 }
 
 .swiggy-card-shadow:hover {
-  transform: scale(0.95);
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-swiggy {
