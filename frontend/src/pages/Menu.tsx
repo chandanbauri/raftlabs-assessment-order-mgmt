@@ -65,7 +65,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
             {/* Navigation Header */}
             <nav className="sticky top-0 z-50 bg-white shadow-md h-20 flex items-center">
                 <div className="max-content w-full flex justify-between items-center">
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-2 md:gap-8">
                         <svg className="w-12 h-14 hover:scale-110 transition-transform cursor-pointer" viewBox="0 0 541 771">
                             <path fill="#FC8019" d="M304 771c-223 0-304-162-304-334 0-165 74-323 209-405C235 15 264 0 300 0c149 0 241 83 241 334 0 165-71 310-237 437z" />
                             <path fill="#FFF" d="M301 645c-112 0-155-83-155-171 0-83 38-164 107-207 13-8 27-16 45-16 77 0 124 43 124 171 0 83-36 158-121 223z" />
@@ -75,12 +75,12 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                             className="flex items-center gap-2 group cursor-pointer border-b-2 border-transparent hover:border-primary-500 pb-1 max-w-[300px]"
                         >
                             <span className="font-bold text-sm text-swiggy-dark">Home</span>
-                            <span className="text-swiggy-light text-sm truncate">{currentLocation}</span>
-                            <ChevronDown className="w-4 h-4 text-primary-500" />
+                            <span className="text-swiggy-light text-sm truncate hidden md:inline">{currentLocation}</span>
+                            <ChevronDown className="w-4 h-4 text-primary-500 hidden md:block" />
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-10">
+                    <div className="flex items-center gap-4 md:gap-10">
                         {isSearchVisible ? (
                             <div className="flex items-center bg-gray-100 px-4 py-2 rounded-lg gap-2 animate-fade-in border border-gray-200">
                                 <Search className="w-4 h-4 text-gray-500" />
@@ -100,18 +100,18 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                         ) : (
                             <div onClick={() => setIsSearchVisible(true)} className="nav-item">
                                 <Search className="w-5 h-5" />
-                                <span>Search</span>
+                                <span className="hidden md:inline">Search</span>
                             </div>
                         )}
 
                         <div onClick={() => setShowOffersModal(true)} className="nav-item">
                             <Percent className="w-5 h-5" />
-                            <span>Offers</span>
+                            <span className="hidden md:inline">Offers</span>
                         </div>
 
                         <div onClick={() => isAuthenticated ? logout() : setShowAuthModal(true)} className="nav-item">
                             <User className="w-5 h-5" />
-                            <span>{isAuthenticated ? user?.name : 'Sign In'}</span>
+                            <span className="hidden md:inline">{isAuthenticated ? user?.name : 'Sign In'}</span>
                         </div>
 
                         <div onClick={onGoToCart} className="nav-item text-primary-500 font-bold">
@@ -119,7 +119,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                                 <ShoppingCart className="w-5 h-5" />
                                 {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-primary-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>}
                             </div>
-                            <span>Cart</span>
+                            <span className="hidden md:inline">Cart</span>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
             {/* Hero / Filter Section */}
             <div className="max-content mt-8 pb-12 border-b border-gray-200">
                 <h2 className="text-2xl font-bold mb-6">Restaurants with online food delivery</h2>
-                <div className="flex gap-4 flex-wrap">
+                <div className="flex gap-2 md:gap-4 overflow-x-auto pb-4 hide-scrollbar whitespace-nowrap">
                     {['Fast Delivery', 'Ratings 4.0+', 'Pure Veg', 'Rs. 300-Rs. 600', 'Less than Rs. 300'].map(filter => (
                         <button
                             key={filter}

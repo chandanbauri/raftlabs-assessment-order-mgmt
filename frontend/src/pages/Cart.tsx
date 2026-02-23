@@ -61,7 +61,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                 <div className="lg:col-span-2 space-y-6">
 
                     {/* Step 1: Account */}
-                    <div className={`bg-white p-10 relative ${!isAuthenticated ? 'opacity-100' : 'opacity-80'}`}>
+                    <div className={`bg-white p-6 md:p-10 relative ${!isAuthenticated ? 'opacity-100' : 'opacity-80'}`}>
                         <div className="absolute left-0 top-10 flex flex-col items-center">
                             <div className={`w-10 h-10 ${isAuthenticated ? 'bg-green-600' : 'bg-swiggy-dark'} flex items-center justify-center text-white shadow-lg`}>
                                 {isAuthenticated ? <CheckCircle2 className="w-5 h-5" /> : <User className="w-5 h-5" />}
@@ -87,7 +87,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                     </div>
 
                     {/* Step 2: Address */}
-                    <div className={`bg-white p-10 relative ${step === 'checkout' ? 'opacity-100' : 'opacity-80'}`}>
+                    <div className={`bg-white p-6 md:p-10 relative ${step === 'checkout' ? 'opacity-100' : 'opacity-80'}`}>
                         <div className="absolute left-0 top-10 flex flex-col items-center">
                             <div className={`w-10 h-10 ${step === 'payment' ? 'bg-green-600' : 'bg-swiggy-dark'} flex items-center justify-center text-white shadow-lg`}>
                                 {step === 'payment' ? <CheckCircle2 className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
@@ -97,7 +97,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                             <h2 className="text-xl font-bold mb-8">Delivery Address</h2>
                             {step === 'checkout' ? (
                                 <div className="space-y-6">
-                                    <div className="border-2 border-primary-500 p-8 rounded-md relative flex gap-6 group cursor-pointer">
+                                    <div className="border-2 border-primary-500 p-4 md:p-8 rounded-md relative flex flex-col md:flex-row gap-4 md:gap-6 group cursor-pointer">
                                         <div className="w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-primary-500 transition-colors"><MapPin className="w-6 h-6" /></div>
                                         <div>
                                             <h4 className="font-bold text-swiggy-dark mb-1">Home</h4>
@@ -124,7 +124,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
 
                     {/* Step 3: Payment */}
                     {step === 'payment' && (
-                        <div className="bg-white p-10 relative animate-fade-in">
+                        <div className="bg-white p-6 md:p-10 relative animate-fade-in">
                             <div className="absolute left-0 top-10">
                                 <div className="w-10 h-10 bg-swiggy-dark flex items-center justify-center text-white shadow-lg">
                                     <Wallet className="w-5 h-5" />
@@ -162,7 +162,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
 
                 {/* Right Section: Bill Summary */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white p-8 sticky top-24 shadow-sm">
+                    <div className="bg-white p-6 md:p-8 sticky xl:top-24 shadow-sm">
                         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                             <img src={cart[0].image_url} className="w-14 h-14 object-cover rounded-md" alt="Restaurant" />
                             <div>
@@ -180,7 +180,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                                         </div>
                                         <span className="text-swiggy-dark">{item.name}</span>
                                     </div>
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex flex-col items-end md:flex-row lg:items-center gap-2 md:gap-6 mt-2 md:mt-0">
                                         <div className="flex items-center border border-gray-200 px-2 py-1 gap-4">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="text-gray-400 hover:text-red-500">-</button>
                                             <span className="text-green-600">{item.quantity}</span>

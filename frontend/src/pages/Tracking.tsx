@@ -54,7 +54,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
 
             <div className="max-w-[800px] mx-auto w-full p-6 space-y-6">
                 {/* Estimated Time Card */}
-                <div className="bg-white p-8 rounded-lg shadow-sm flex justify-between items-center relative overflow-hidden">
+                <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden gap-4 md:gap-0">
                     <div className="absolute top-0 left-0 w-2 h-full bg-primary-500" />
                     <div>
                         <h2 className="text-3xl font-black mb-1">25 MINS</h2>
@@ -68,7 +68,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                 </div>
 
                 {/* Tracker */}
-                <div className="bg-white p-8 rounded-lg shadow-sm">
+                <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm">
                     <div className="space-y-12 relative">
                         {/* Vertical Line */}
                         <div className="absolute left-[11px] top-2 bottom-2 w-1 bg-gray-100" />
@@ -89,7 +89,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                 </div>
 
                 {/* Delivery Partner */}
-                <div className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
+                <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 text-center sm:text-left">
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-swiggy-gray/10 rounded-full flex items-center justify-center overflow-hidden relative">
                             <PartnerImageWithSkeleton src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_100,h_100,c_fill/delivery-partner-v2" />
@@ -113,7 +113,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                 </div>
 
                 {/* Address & Bill */}
-                <div className="bg-white p-8 rounded-lg shadow-sm">
+                <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm">
                     <div className="flex gap-2 mb-6">
                         <MapPin className="w-5 h-5 text-gray-400" />
                         <div>
