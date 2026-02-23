@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Item, Order } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8080');
 
 export const getMenu = async (): Promise<Item[]> => {
     const response = await axios.get(`${API_BASE_URL}/menu`);
