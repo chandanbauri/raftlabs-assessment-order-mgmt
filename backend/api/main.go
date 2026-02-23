@@ -38,6 +38,7 @@ func initEngine() {
 	r.GET("/api/menu", handlers.GetMenu)
 	r.POST("/api/orders", handlers.CreateOrder)
 	r.GET("/api/orders/:id", handlers.GetOrder)
+	r.GET("/api/orders/user/:name", handlers.GetUserOrders)
 	r.POST("/api/login", handlers.Login)
 	r.GET("/api/offers", handlers.GetOffers)
 	r.GET("/api/locations", handlers.GetLocations)

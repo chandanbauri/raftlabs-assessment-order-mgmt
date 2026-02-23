@@ -1,31 +1,37 @@
 import { useEffect, useState } from 'react';
-import { getOrder } from '../api/client';
+import { getOrder, getUserOrders } from '../api/client';
 import { Order } from '../types';
-import { ArrowLeft, Clock, MapPin, Phone, MessageCircle, Star } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { ArrowLeft, Clock, MapPin, Phone, MessageCircle, Star, ShoppingBag, ChevronRight } from 'lucide-react';
 
 export default function Tracking({ orderId, onBack }: { orderId: string; onBack: () => void }) {
+    const { user, isAuthenticated } = useAuth();
     const [order, setOrder] = useState<Order | null>(null);
     const [status, setStatus] = useState<string>('');
+    const [pastOrders, setPastOrders] = useState<Order[]>([]);
 
     useEffect(() => {
-        getOrder(orderId).then((o) => {
-            setOrder(o);
-            setStatus(o.status);
-        });
-
-        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-        const wsUrl = `${API_BASE_URL.replace('http', 'ws')}/ws/order-status?orderId=${orderId}`;
-        const ws = new WebSocket(wsUrl);
-
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.status) {
-                setStatus(data.status);
-            }
+        const fetchOrder = () => {
+            getOrder(orderId).then((o) => {
+                setOrder(o);
+                setStatus(o.status);
+            });
         };
 
-        return () => ws.close();
+        fetchOrder();
+        const interval = setInterval(fetchOrder, 2000); // Poll every 2 seconds
+
+        return () => clearInterval(interval);
     }, [orderId]);
+
+    useEffect(() => {
+        if (isAuthenticated && user?.name) {
+            getUserOrders(user.name).then((orders) => {
+                // filter out the current active order
+                setPastOrders(orders.filter(o => o.id !== orderId));
+            });
+        }
+    }, [isAuthenticated, user?.name, orderId]);
 
     const steps = [
         { label: 'Order Received', key: 'Order Received', time: 'Received' },
@@ -124,13 +130,43 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     <div className="border-t border-gray-100 pt-6">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h4 className="font-bold text-sm mb-1">{order.order_items.length} ITEM(S)</h4>
-                                <p className="text-xs text-swiggy-dark font-black tracking-tighter">Total Amount: ₹{(order.total_price + 47).toFixed(2)}</p>
+                                <h4 className="font-bold text-sm mb-1">{order.order_items?.length || 0} ITEM(S)</h4>
+                                <p className="text-xs text-swiggy-dark font-black tracking-tighter">Total Amount: ₹{((order.total_price || 0) + 47).toFixed(2)}</p>
                             </div>
                             <span className="text-xs font-bold text-primary-500 uppercase cursor-pointer hover:underline">View Receipt</span>
                         </div>
                     </div>
                 </div>
+
+                {/* Past Orders */}
+                {pastOrders.length > 0 && (
+                    <div className="mt-10">
+                        <h3 className="text-xl font-black text-swiggy-dark mb-4">Past Orders</h3>
+                        <div className="space-y-4">
+                            {pastOrders.map((po) => (
+                                <div key={po.id} className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between group hover:border-primary-500 border border-transparent transition-all cursor-pointer">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
+                                            <ShoppingBag className="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-sm mb-1 text-swiggy-dark flex items-center gap-2">
+                                                Order #{po.id.slice(0, 8).toUpperCase()}
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full text-white ${po.status === 'Delivered' ? 'bg-green-500' : 'bg-orange-500'}`}>
+                                                    {po.status}
+                                                </span>
+                                            </h4>
+                                            <p className="text-xs text-gray-400 font-medium">
+                                                <span className="font-bold">₹{((po.total_price || 0) + 47).toFixed(2)}</span> • {po.order_items?.length || 0} Items
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary-500" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

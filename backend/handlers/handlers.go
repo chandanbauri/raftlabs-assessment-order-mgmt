@@ -86,7 +86,40 @@ func GetOrder(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
 	}
+
+	// Dynamic serverless fallback: update status based on elapsed time if not already delivered
+	if order.Status != "Delivered" {
+		elapsed := time.Since(order.CreatedAt)
+		newStatus := order.Status
+		if elapsed > 15*time.Second {
+			newStatus = "Delivered"
+		} else if elapsed > 10*time.Second {
+			newStatus = "Out for Delivery"
+		} else if elapsed > 5*time.Second {
+			newStatus = "Preparing"
+		}
+
+		if newStatus != order.Status {
+			order.Status = newStatus
+			database.DB.Save(&order)
+		}
+	}
+
 	c.JSON(http.StatusOK, order)
+}
+
+func GetUserOrders(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
+	name := c.Param("name")
+	var orders []models.Order
+	if err := database.DB.Preload("OrderItems.Item").Where("customer_name = ?", name).Order("created_at desc").Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders"})
+		return
+	}
+	c.JSON(http.StatusOK, orders)
 }
 
 func Login(c *gin.Context) {

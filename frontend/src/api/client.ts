@@ -24,6 +24,11 @@ export const getOrder = async (id: string): Promise<Order> => {
     return response.data;
 };
 
+export const getUserOrders = async (name: string): Promise<Order[]> => {
+    const response = await axios.get(`${API_BASE_URL}/orders/user/${name}`);
+    return response.data;
+};
+
 export const loginUser = async (email: string, password: string) => {
     const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
     return response.data;
