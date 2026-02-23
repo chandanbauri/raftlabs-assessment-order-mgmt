@@ -1,7 +1,7 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -15,7 +15,7 @@ export default {
           200: '#fed7aa',
           300: '#fdba74',
           400: '#fb923c',
-          500: '#fc8019', // Swiggy Orange
+          500: '#fc8019',
           600: '#ea580c',
           700: '#c2410c',
           800: '#9a3412',

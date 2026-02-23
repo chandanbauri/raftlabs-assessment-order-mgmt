@@ -14,7 +14,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [sortBy, setSortBy] = useState<string | null>(null);
 
-    // Modals state
+
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [showOffersModal, setShowOffersModal] = useState(false);
@@ -62,7 +62,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
 
     return (
         <div className="min-h-screen relative">
-            {/* Navigation Header */}
+            {}
             <nav className="sticky top-0 z-50 bg-white shadow-md h-20 flex items-center">
                 <div className="max-content w-full flex justify-between items-center">
                     <div className="flex items-center gap-2 md:gap-8">
@@ -125,7 +125,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                 </div>
             </nav>
 
-            {/* Hero / Filter Section */}
+            {}
             <div className="max-content mt-8 pb-12 border-b border-gray-200">
                 <h2 className="text-2xl font-bold mb-6">Restaurants with online food delivery</h2>
                 <div className="flex gap-2 md:gap-4 overflow-x-auto pb-4 hide-scrollbar whitespace-nowrap">
@@ -153,7 +153,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                 </div>
             </div>
 
-            {/* Grid Listing */}
+            {}
             <div className="max-content py-12">
                 {filteredItems.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
@@ -186,7 +186,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                 )}
             </div>
 
-            {/* Modals */}
+            {}
             <Modal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} title="Login">
                 <AuthForm onSuccess={(email, name) => { login(email, name); setShowAuthModal(false); }} />
             </Modal>
@@ -227,7 +227,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
     );
 }
 
-// Sub-components
+
 function Modal({ isOpen, onClose, title, children }: any) {
     if (!isOpen) return null;
     return (

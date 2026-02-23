@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import App from '../App';
 
-// Mock the API client
+
 vi.mock('../api/client', () => ({
     getMenu: vi.fn(() => Promise.resolve([
         { id: 1, name: 'Pizza', price: 299, image_url: '', description: 'Veg' }
@@ -32,7 +32,7 @@ describe('Swiggy App Flow', () => {
         const loginBtn = screen.getByText('Login to Swiggy');
         fireEvent.click(loginBtn);
 
-        // Auth success should show user name
+
         expect(await screen.findByText('Tester')).toBeInTheDocument();
     });
 

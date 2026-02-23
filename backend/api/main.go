@@ -31,13 +31,14 @@ func initEngine() {
 		AllowCredentials: true,
 	}))
 
-	// Routes
 	r.OPTIONS("/*path", func(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNoContent)
 	})
 	r.GET("/api/menu", handlers.GetMenu)
 	r.POST("/api/orders", handlers.CreateOrder)
 	r.GET("/api/orders/:id", handlers.GetOrder)
+	r.POST("/api/orders/:id/cancel", handlers.CancelOrder)
+	r.PATCH("/api/orders/:id/status", handlers.UpdateOrderStatus)
 	r.GET("/api/orders/user/:name", handlers.GetUserOrders)
 	r.POST("/api/login", handlers.Login)
 	r.GET("/api/offers", handlers.GetOffers)
@@ -47,7 +48,6 @@ func initEngine() {
 	})
 	r.GET("/api/test-db", handlers.TestDB)
 
-	// Add a root handler for health check or documentation
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Order Management API"})
 	})

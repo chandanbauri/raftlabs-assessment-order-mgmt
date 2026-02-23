@@ -12,22 +12,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func TestMain(m *testing.M) {
-	// Setup test DB
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_USER", "rlab")
-	os.Setenv("DB_PASSWORD", "rlabs")
-	os.Setenv("DB_NAME", "rlab")
-	os.Setenv("DB_PORT", "5432")
-	os.Setenv("DB_SCHEMA", "rlabs_test")
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	db.AutoMigrate(&models.Item{}, &models.Order{}, &models.OrderItem{}, &models.User{}, &models.Offer{})
+	database.DB = db
 
-	database.InitDB()
+	db.Create(&models.Item{ID: 1, Name: "Test Item", Price: 10.0})
+	db.Create(&models.User{Email: "demo@example.com", Password: "password123", Name: "Test User"})
+	db.Create(&models.Offer{Code: "TESTOFFER", Discount: 10, Description: "Test Offer"})
 
 	code := m.Run()
-
-	database.DB.Exec("DROP SCHEMA rlabs_test CASCADE")
 	os.Exit(code)
 }
 
@@ -53,7 +51,6 @@ func TestLogin(t *testing.T) {
 	r := gin.Default()
 	r.POST("/login", Login)
 
-	// Valid login
 	loginReq := models.LoginRequest{
 		Email:    "demo@example.com",
 		Password: "password123",
@@ -65,7 +62,6 @@ func TestLogin(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	// Invalid login
 	loginReq.Password = "wrong"
 	body, _ = json.Marshal(loginReq)
 	req, _ = http.NewRequest("POST", "/login", bytes.NewBuffer(body))

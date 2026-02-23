@@ -19,7 +19,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
         };
 
         fetchOrder();
-        const interval = setInterval(fetchOrder, 2000); // Poll every 2 seconds
+        const interval = setInterval(fetchOrder, 2000);
 
         return () => clearInterval(interval);
     }, [orderId]);
@@ -27,7 +27,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
     useEffect(() => {
         if (isAuthenticated && user?.name) {
             getUserOrders(user.name).then((orders) => {
-                // filter out the current active order
+
                 setPastOrders(orders.filter(o => o.id !== orderId));
             });
         }
@@ -45,7 +45,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* Header */}
+            {}
             <div className="bg-white shadow-sm p-4 sticky top-0 z-10">
                 <div className="max-w-[1240px] mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-4">
@@ -59,7 +59,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
             </div>
 
             <div className="max-w-[800px] mx-auto w-full p-6 space-y-6">
-                {/* Estimated Time Card */}
+                {}
                 <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden gap-4 md:gap-0">
                     <div className="absolute top-0 left-0 w-2 h-full bg-primary-500" />
                     <div>
@@ -73,10 +73,10 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     </div>
                 </div>
 
-                {/* Tracker */}
+                {}
                 <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm">
                     <div className="space-y-12 relative">
-                        {/* Vertical Line */}
+                        {}
                         <div className="absolute left-[11px] top-2 bottom-2 w-1 bg-gray-100" />
 
                         {steps.map((step, index) => {
@@ -94,7 +94,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     </div>
                 </div>
 
-                {/* Delivery Partner */}
+                {}
                 <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 text-center sm:text-left">
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-swiggy-gray/10 rounded-full flex items-center justify-center overflow-hidden relative">
@@ -118,7 +118,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     </div>
                 </div>
 
-                {/* Address & Bill */}
+                {}
                 <div className="bg-white p-6 md:p-8 rounded-lg shadow-sm">
                     <div className="flex gap-2 mb-6">
                         <MapPin className="w-5 h-5 text-gray-400" />
@@ -138,7 +138,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     </div>
                 </div>
 
-                {/* Past Orders */}
+                {}
                 {pastOrders.length > 0 && (
                     <div className="mt-10">
                         <h3 className="text-xl font-black text-swiggy-dark mb-4">Past Orders</h3>

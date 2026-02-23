@@ -75,3 +75,44 @@ func TestCreateOrder_InvalidPhone(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
+
+func TestCancelOrder(t *testing.T) {
+	setupTestDB()
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.POST("/orders/:id/cancel", handlers.CancelOrder)
+
+	order := models.NewOrder()
+	database.DB.Create(&order)
+
+	req, _ := http.NewRequest("POST", "/orders/"+order.ID+"/cancel", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var updatedOrder models.Order
+	database.DB.First(&updatedOrder, "id = ?", order.ID)
+	assert.Equal(t, "Cancelled", updatedOrder.Status)
+}
+
+func TestUpdateOrderStatus(t *testing.T) {
+	setupTestDB()
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.PATCH("/orders/:id/status", handlers.UpdateOrderStatus)
+
+	order := models.NewOrder()
+	database.DB.Create(&order)
+
+	payload := `{"status":"Delivered"}`
+	req, _ := http.NewRequest("PATCH", "/orders/"+order.ID+"/status", strings.NewReader(payload))
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var updatedOrder models.Order
+	database.DB.First(&updatedOrder, "id = ?", order.ID)
+	assert.Equal(t, "Delivered", updatedOrder.Status)
+}

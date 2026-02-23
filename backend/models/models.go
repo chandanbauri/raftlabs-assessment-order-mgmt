@@ -80,3 +80,7 @@ func NewOrder() *Order {
 		PaymentStatus: "Pending",
 	}
 }
+
+type UpdateOrderStatusRequest struct {
+	Status string `json:"status" binding:"required"`
+}

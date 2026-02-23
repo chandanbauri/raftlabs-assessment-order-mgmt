@@ -60,7 +60,6 @@ func CreateOrder(c *gin.Context) {
 	}
 	order.TotalPrice = totalPrice
 
-	// Handle dummy payment
 	if req.PaymentMethod != "" {
 		order.PaymentStatus = "Paid"
 	}
@@ -87,7 +86,6 @@ func GetOrder(c *gin.Context) {
 		return
 	}
 
-	// Dynamic serverless fallback: update status based on elapsed time if not already delivered
 	if order.Status != "Delivered" {
 		elapsed := time.Since(order.CreatedAt)
 		newStatus := order.Status
@@ -120,6 +118,47 @@ func GetUserOrders(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, orders)
+}
+
+func CancelOrder(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
+	id := c.Param("id")
+	var order models.Order
+	if err := database.DB.First(&order, "id = ?", id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	if order.Status == "Delivered" || order.Status == "Out for Delivery" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot cancel order that is already en route or delivered"})
+		return
+	}
+	order.Status = "Cancelled"
+	database.DB.Save(&order)
+	c.JSON(http.StatusOK, order)
+}
+
+func UpdateOrderStatus(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
+	id := c.Param("id")
+	var req models.UpdateOrderStatusRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var order models.Order
+	if err := database.DB.First(&order, "id = ?", id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	order.Status = req.Status
+	database.DB.Save(&order)
+	c.JSON(http.StatusOK, order)
 }
 
 func Login(c *gin.Context) {
@@ -164,7 +203,7 @@ func GetLocations(c *gin.Context) {
 
 func simulateOrderStatus(orderID string) {
 	statuses := []string{"Preparing", "Out for Delivery", "Delivered"}
-	interval := 5 * time.Second // Faster simulation for testing
+	interval := 5 * time.Second
 
 	for _, status := range statuses {
 		time.Sleep(interval)
@@ -182,7 +221,7 @@ func TestDB(c *gin.Context) {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"status": "error", "message": "Database is not connected"})
 		return
 	}
-	// Try a simple query to assert connection is alive
+
 	sqlDB, err := database.DB.DB()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to get database instance: " + err.Error()})

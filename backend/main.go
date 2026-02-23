@@ -14,7 +14,6 @@ func main() {
 		port = "8080"
 	}
 
-	// Route all local traffic to the Vercel handler
 	http.HandleFunc("/", handler.Handler)
 
 	log.Printf("Starting local development server on http://localhost:%s", port)

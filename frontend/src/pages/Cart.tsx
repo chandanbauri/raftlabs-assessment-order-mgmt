@@ -30,7 +30,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                 items: cart.map(i => ({ item_id: i.id, quantity: i.quantity })),
             });
 
-            // Artificial delay for "Payment Processing" feel
+
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             clearCart();
@@ -57,10 +57,10 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
         <div className="min-h-screen bg-[#e9ede3] py-10 px-4">
             <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {/* Left Section */}
+                {}
                 <div className="lg:col-span-2 space-y-6">
 
-                    {/* Step 1: Account */}
+                    {}
                     <div className={`bg-white p-6 md:p-10 relative ${!isAuthenticated ? 'opacity-100' : 'opacity-80'}`}>
                         <div className="absolute left-0 top-10 flex flex-col items-center">
                             <div className={`w-10 h-10 ${isAuthenticated ? 'bg-green-600' : 'bg-swiggy-dark'} flex items-center justify-center text-white shadow-lg`}>
@@ -86,7 +86,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                         </div>
                     </div>
 
-                    {/* Step 2: Address */}
+                    {}
                     <div className={`bg-white p-6 md:p-10 relative ${step === 'checkout' ? 'opacity-100' : 'opacity-80'}`}>
                         <div className="absolute left-0 top-10 flex flex-col items-center">
                             <div className={`w-10 h-10 ${step === 'payment' ? 'bg-green-600' : 'bg-swiggy-dark'} flex items-center justify-center text-white shadow-lg`}>
@@ -122,7 +122,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                         </div>
                     </div>
 
-                    {/* Step 3: Payment */}
+                    {}
                     {step === 'payment' && (
                         <div className="bg-white p-6 md:p-10 relative animate-fade-in">
                             <div className="absolute left-0 top-10">
@@ -160,7 +160,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
                     )}
                 </div>
 
-                {/* Right Section: Bill Summary */}
+                {}
                 <div className="lg:col-span-1">
                     <div className="bg-white p-6 md:p-8 sticky xl:top-24 shadow-sm">
                         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
