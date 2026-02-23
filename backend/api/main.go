@@ -41,6 +41,7 @@ func initEngine() {
 	r.GET("/ws/order-status", func(c *gin.Context) {
 		websocket.GlobalHub.HandleWS(c.Writer, c.Request)
 	})
+	r.GET("/test-db", handlers.TestDB)
 
 	// Add a root handler for health check or documentation
 	r.GET("/", func(c *gin.Context) {

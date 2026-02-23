@@ -143,3 +143,22 @@ func simulateOrderStatus(orderID string) {
 func isValidPhone(phone string) bool {
 	return len(phone) >= 10 && len(phone) <= 15
 }
+
+func TestDB(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"status": "error", "message": "Database is not connected"})
+		return
+	}
+	// Try a simple query to assert connection is alive
+	sqlDB, err := database.DB.DB()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to get database instance: " + err.Error()})
+		return
+	}
+	if err := sqlDB.Ping(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Database ping failed: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Database connection is successful"})
+}
