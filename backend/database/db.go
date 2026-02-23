@@ -3,8 +3,10 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 	"order-mgmt-backend/models"
+	"os"
+
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -12,12 +14,17 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable search_path=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"),
+		os.Getenv("DB_SCHEMA"),
 	)
 
 	var err error
@@ -25,6 +32,8 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	DB.Exec(fmt.Sprintf("CREATE SCHEMA IF NOT EXISTS %s", os.Getenv("DB_SCHEMA")))
 
 	err = DB.AutoMigrate(&models.Item{}, &models.Order{}, &models.OrderItem{})
 	if err != nil {
