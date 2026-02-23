@@ -91,8 +91,8 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                 {/* Delivery Partner */}
                 <div className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-swiggy-gray/10 rounded-full flex items-center justify-center overflow-hidden">
-                            <img src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_100,h_100,c_fill/delivery-partner-v2" alt="Partner" />
+                        <div className="w-16 h-16 bg-swiggy-gray/10 rounded-full flex items-center justify-center overflow-hidden relative">
+                            <PartnerImageWithSkeleton src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_100,h_100,c_fill/delivery-partner-v2" />
                         </div>
                         <div>
                             <h4 className="font-bold">Rahul Mishra</h4>
@@ -133,5 +133,20 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                 </div>
             </div>
         </div>
+    );
+}
+
+function PartnerImageWithSkeleton({ src }: { src: string }) {
+    const [loaded, setLoaded] = useState(false);
+    return (
+        <>
+            {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
+            <img
+                src={src}
+                alt="Partner"
+                onLoad={() => setLoaded(true)}
+                className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+        </>
     );
 }

@@ -52,6 +52,11 @@ func CreateOrder(c *gin.Context) {
 	}
 	order.TotalPrice = totalPrice
 
+	// Handle dummy payment
+	if req.PaymentMethod != "" {
+		order.PaymentStatus = "Paid"
+	}
+
 	if err := database.DB.Create(&order).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
 		return
@@ -72,9 +77,37 @@ func GetOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, order)
 }
 
+func Login(c *gin.Context) {
+	var req models.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.Where("email = ? AND password = ?", req.Email, req.Password).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
+
+func GetOffers(c *gin.Context) {
+	var offers []models.Offer
+	database.DB.Find(&offers)
+	c.JSON(http.StatusOK, offers)
+}
+
+func GetLocations(c *gin.Context) {
+	var locations []models.Location
+	database.DB.Find(&locations)
+	c.JSON(http.StatusOK, locations)
+}
+
 func simulateOrderStatus(orderID string) {
 	statuses := []string{"Preparing", "Out for Delivery", "Delivered"}
-	interval := 40 * time.Second
+	interval := 20 * time.Second // Faster simulation for testing
 
 	for _, status := range statuses {
 		time.Sleep(interval)

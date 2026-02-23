@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import Menu from './pages/Menu';
 import Cart from './pages/Cart';
 import Tracking from './pages/Tracking';
@@ -28,8 +29,10 @@ function AppContent() {
 
 export default function App() {
     return (
-        <CartProvider>
-            <AppContent />
-        </CartProvider>
+        <AuthProvider>
+            <CartProvider>
+                <AppContent />
+            </CartProvider>
+        </AuthProvider>
     );
 }

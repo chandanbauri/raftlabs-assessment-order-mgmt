@@ -28,6 +28,36 @@
   @apply bg-primary-500 text-white px-8 py-3 font-bold uppercase tracking-tight hover:bg-primary-600 transition-all duration-200 active:scale-95;
 }
 
+.nav-item {
+  @apply flex items-center gap-3 text-swiggy-dark font-medium hover:text-primary-500 cursor-pointer transition-colors whitespace-nowrap;
+}
+
+.filter-btn {
+  @apply px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100 transition-all text-swiggy-light;
+}
+
+.filter-btn.active {
+  @apply bg-swiggy-dark text-white border-swiggy-dark shadow-md;
+}
+
+.filter-btn.active-sort {
+  @apply bg-primary-500 text-white border-primary-500 shadow-md;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

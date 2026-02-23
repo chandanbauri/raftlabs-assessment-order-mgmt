@@ -2,12 +2,13 @@ package main
 
 import (
 	"log"
-	"os"
 	"order-mgmt-backend/database"
 	"order-mgmt-backend/handlers"
 	"order-mgmt-backend/websocket"
-	"github.com/gin-gonic/gin"
+	"os"
+
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -25,6 +26,9 @@ func main() {
 	r.GET("/menu", handlers.GetMenu)
 	r.POST("/orders", handlers.CreateOrder)
 	r.GET("/orders/:id", handlers.GetOrder)
+	r.POST("/login", handlers.Login)
+	r.GET("/offers", handlers.GetOffers)
+	r.GET("/locations", handlers.GetLocations)
 	r.GET("/ws/order-status", func(c *gin.Context) {
 		websocket.GlobalHub.HandleWS(c.Writer, c.Request)
 	})
