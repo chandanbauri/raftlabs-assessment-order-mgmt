@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { createOrder } from '../api/client';
-import { Minus, Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { Minus, Plus, Trash2, ArrowLeft, ShieldCheck, MapPin, Phone, User } from 'lucide-react';
 
 export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; onOrderPlaced: (orderId: string) => void }) {
     const { cart, total, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -26,7 +26,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
             clearCart();
             onOrderPlaced(order.id);
         } catch (err: any) {
-            setError(err.response?.data?.error || 'Failed to place order');
+            setError(err.response?.data?.error || 'Validation failed. Check details.');
         } finally {
             setIsLoading(false);
         }
@@ -34,94 +34,145 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
 
     if (cart.length === 0) {
         return (
-            <div className="max-w-2xl mx-auto p-12 text-center">
-                <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-                <button onClick={onBack} className="text-primary-600 font-semibold flex items-center justify-center gap-2 mx-auto">
-                    <ArrowLeft className="w-5 h-5" /> Back to Menu
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in">
+                <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                    <Trash2 className="w-10 h-10 text-slate-300" />
+                </div>
+                <h2 className="text-3xl font-black text-slate-950 mb-3">Your cart is empty</h2>
+                <p className="text-slate-500 mb-8 max-w-sm">Looks like you haven't added anything to your cart yet.</p>
+                <button onClick={onBack} className="btn-primary">
+                    Explore Menu
                 </button>
             </div>
         );
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <button onClick={onBack} className="flex items-center gap-2 text-gray-600 mb-8 hover:text-gray-900 transition-colors">
-                <ArrowLeft className="w-5 h-5" /> Back to Menu
+        <div className="min-h-screen max-w-7xl mx-auto p-6 md:p-12 animate-fade-in">
+            <button
+                onClick={onBack}
+                className="group flex items-center gap-3 text-slate-500 mb-12 hover:text-slate-950 transition-colors font-bold uppercase tracking-widest text-xs"
+            >
+                <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-slate-950 transition-colors">
+                    <ArrowLeft className="w-4 h-4" />
+                </div>
+                Back to Menu
             </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div>
-                    <h2 className="text-2xl font-bold mb-6">Your Order</h2>
-                    <div className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="lg:col-span-7">
+                    <h2 className="text-4xl font-black text-slate-950 mb-10 tracking-tight">Your Order</h2>
+                    <div className="space-y-6">
                         {cart.map((item) => (
-                            <div key={item.id} className="flex items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                                <img src={item.image_url} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                            <div key={item.id} className="group flex items-center gap-6 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-premium hover:border-primary-100 transition-all">
+                                <div className="relative w-24 h-24 flex-shrink-0">
+                                    <img src={item.image_url} alt={item.name} className="w-full h-full object-cover rounded-2xl" />
+                                </div>
                                 <div className="flex-1">
-                                    <h4 className="font-bold">{item.name}</h4>
+                                    <h4 className="text-lg font-black text-slate-950 mb-1">{item.name}</h4>
                                     <p className="text-primary-600 font-bold">${item.price.toFixed(2)}</p>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center border border-gray-200 rounded-lg">
-                                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1 hover:bg-gray-50"><Minus className="w-4 h-4" /></button>
-                                        <span className="w-8 text-center font-semibold">{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1 hover:bg-gray-50"><Plus className="w-4 h-4" /></button>
+                                <div className="flex flex-col items-end gap-3">
+                                    <div className="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-100">
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition-colors"
+                                        >
+                                            <Minus className="w-4 h-4" />
+                                        </button>
+                                        <span className="w-10 text-center font-bold text-slate-950">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition-colors"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
                                     </div>
-                                    <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-600"><Trash2 className="w-5 h-5" /></button>
+                                    <button onClick={() => removeFromCart(item.id)} className="text-slate-300 hover:text-primary-600 transition-colors">
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className="mt-8 border-t pt-4 text-xl font-bold flex justify-between">
-                        <span>Total</span>
-                        <span className="text-primary-600">${total.toFixed(2)}</span>
-                    </div>
                 </div>
 
-                <div>
-                    <h2 className="text-2xl font-bold mb-6">Delivery Details</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                            <input
-                                required
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                                placeholder="John Doe"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                            <textarea
-                                required
-                                value={formData.address}
-                                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                                placeholder="123 Street Name, City"
-                                rows={3}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input
-                                required
-                                type="tel"
-                                value={formData.phone}
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                                placeholder="+1234567890"
-                            />
-                        </div>
-                        {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
-                        <button
-                            disabled={isLoading}
-                            type="submit"
-                            className="w-full bg-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-primary-200"
-                        >
-                            {isLoading ? 'Placing Order...' : 'Place Order'}
-                        </button>
-                    </form>
+                <div className="lg:col-span-5">
+                    <div className="sticky top-12 bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-premium">
+                        <h2 className="text-2xl font-black text-slate-950 mb-8">Checkout Details</h2>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <input
+                                        required
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
+                                        placeholder="Full Name"
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <MapPin className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
+                                    <textarea
+                                        required
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
+                                        placeholder="Delivery Address"
+                                        rows={3}
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <input
+                                        required
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
+                                        placeholder="Phone Number"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="pt-6 border-t border-slate-100 space-y-4">
+                                <div className="flex justify-between text-slate-500 font-bold uppercase tracking-wider text-xs">
+                                    <span>Subtotal</span>
+                                    <span>${total.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-slate-500 font-bold uppercase tracking-wider text-xs">
+                                    <span>Delivery</span>
+                                    <span>FREE</span>
+                                </div>
+                                <div className="flex justify-between text-2xl font-black text-slate-950 pt-2">
+                                    <span>Total</span>
+                                    <span className="text-primary-600">${total.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                            {error && (
+                                <div className="bg-primary-50 border border-primary-100 p-4 rounded-2xl text-primary-700 text-sm font-bold flex items-center gap-3">
+                                    <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
+                                    {error}
+                                </div>
+                            )}
+
+                            <button
+                                disabled={isLoading}
+                                type="submit"
+                                className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-slate-950/20 active:scale-[0.98]"
+                            >
+                                {isLoading ? 'Processing...' : 'Complete Purchase'}
+                            </button>
+
+                            <div className="flex items-center justify-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest pt-4">
+                                <ShieldCheck className="w-4 h-4" />
+                                Secure Checkout Powered by FoodDash
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

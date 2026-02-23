@@ -5,20 +5,41 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Outfit', 'Inter', 'sans-serif'],
+      },
       colors: {
         primary: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+          50: '#fff1f1',
+          100: '#ffdfdf',
+          200: '#ffc4c4',
+          300: '#ff9b9b',
+          400: '#ff6262',
+          500: '#ff3131',
+          600: '#ee1111',
+          700: '#c80b0b',
+          800: '#a50d0d',
+          900: '#891212',
+          950: '#4b0404',
         },
+        slate: {
+          950: '#020617',
+        }
       },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      }
     },
   },
   plugins: [],

@@ -16,7 +16,7 @@ function AppContent() {
     };
 
     return (
-        <main className="min-min-h-screen bg-slate-50 py-12">
+        <main className="min-h-screen bg-slate-50">
             {view === 'menu' && <Menu onGoToCart={() => setView('cart')} />}
             {view === 'cart' && <Cart onBack={() => setView('menu')} onOrderPlaced={handleOrderPlaced} />}
             {view === 'tracking' && activeOrderId && (
