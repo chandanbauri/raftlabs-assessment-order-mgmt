@@ -131,7 +131,7 @@ func GetLocations(c *gin.Context) {
 
 func simulateOrderStatus(orderID string) {
 	statuses := []string{"Preparing", "Out for Delivery", "Delivered"}
-	interval := 20 * time.Second // Faster simulation for testing
+	interval := 5 * time.Second // Faster simulation for testing
 
 	for _, status := range statuses {
 		time.Sleep(interval)
