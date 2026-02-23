@@ -174,8 +174,8 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                                 key={item.id}
                                 className="group cursor-pointer flex flex-col transition-all duration-200"
                             >
-                                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:scale-95 transition-transform">
-                                    <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:scale-95 transition-transform bg-gray-100">
+                                    <ImageWithSkeleton src={item.image_url} alt={item.name} />
                                     <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent p-4 flex items-end">
                                         <span className="text-white font-black text-xl uppercase tracking-tighter">Items at ₹{item.price}</span>
                                     </div>
@@ -232,5 +232,34 @@ function Star({ className }: { className?: string }) {
         <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
         </svg>
+    );
+}
+
+function ImageWithSkeleton({ src, alt }: { src: string; alt: string }) {
+    const [loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(false);
+
+    return (
+        <>
+            {!loaded && !error && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-primary-500 rounded-full animate-spin" />
+                </div>
+            )}
+            {error ? (
+                <div className="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center p-4 text-center">
+                    <ShoppingCart className="w-12 h-12 text-gray-300 mb-2" />
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Image Unavailable</span>
+                </div>
+            ) : (
+                <img
+                    src={src}
+                    alt={alt}
+                    onLoad={() => setLoaded(true)}
+                    onError={() => setError(true)}
+                    className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                />
+            )}
+        </>
     );
 }
