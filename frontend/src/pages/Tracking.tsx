@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getOrder } from '../api/client';
 import { Order } from '../types';
-import { Package, Clock, Truck, CheckCircle2, ArrowLeft, Loader2, MapPin, ReceiptText } from 'lucide-react';
+import { Package, Clock, Truck, CheckCircle2, ArrowLeft, Loader2, MapPin, FileText } from 'lucide-react';
 
 export default function Tracking({ orderId, onBack }: { orderId: string; onBack: () => void }) {
     const [order, setOrder] = useState<Order | null>(null);
@@ -89,8 +89,8 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                                     <div key={step.key} className="flex flex-col items-center max-w-[120px] text-center">
                                         <div
                                             className={`w-16 h-16 rounded-3xl flex items-center justify-center border-4 transition-all duration-700 ${isCompleted
-                                                    ? 'bg-primary-600 border-primary-100 text-white shadow-xl shadow-primary-200 scale-110 z-10'
-                                                    : 'bg-white border-slate-50 text-slate-200'
+                                                ? 'bg-primary-600 border-primary-100 text-white shadow-xl shadow-primary-200 scale-110 z-10'
+                                                : 'bg-white border-slate-50 text-slate-200'
                                                 }`}
                                         >
                                             <Icon className={`w-7 h-7 ${isCurrent ? 'animate-pulse' : ''}`} />
@@ -128,7 +128,7 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
                     <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-premium">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center">
-                                <ReceiptText className="w-5 h-5 text-white" />
+                                <FileText className="w-5 h-5 text-white" />
                             </div>
                             <h3 className="font-black text-slate-950 text-xl tracking-tight">Order Details</h3>
                         </div>
