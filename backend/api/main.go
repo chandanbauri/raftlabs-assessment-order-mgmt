@@ -32,17 +32,20 @@ func initEngine() {
 	}))
 
 	// Routes
-	r.GET("/api/menu", handlers.GetMenu)
-	r.POST("/api/orders", handlers.CreateOrder)
-	r.GET("/api/orders/:id", handlers.GetOrder)
-	r.POST("/api/login", handlers.Login)
-	r.GET("/api/offers", handlers.GetOffers)
-	r.GET("/api/locations", handlers.GetLocations)
-	r.GET("/api/ws/order-status", func(c *gin.Context) {
+	r.GET("/menu", handlers.GetMenu)
+	r.POST("/orders", handlers.CreateOrder)
+	r.GET("/orders/:id", handlers.GetOrder)
+	r.POST("/login", handlers.Login)
+	r.GET("/offers", handlers.GetOffers)
+	r.GET("/locations", handlers.GetLocations)
+	r.GET("/ws/order-status", func(c *gin.Context) {
 		websocket.GlobalHub.HandleWS(c.Writer, c.Request)
 	})
 
-	// Add a root handler for /api
+	// Add a root handler for health check or documentation
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Order Management API"})
+	})
 	r.GET("/api", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Order Management API"})
 	})

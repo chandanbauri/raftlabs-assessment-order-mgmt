@@ -11,12 +11,20 @@ import (
 )
 
 func GetMenu(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	var items []models.Item
 	database.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
 func CreateOrder(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	var req models.CreateOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -68,6 +76,10 @@ func CreateOrder(c *gin.Context) {
 }
 
 func GetOrder(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	id := c.Param("id")
 	var order models.Order
 	if err := database.DB.Preload("OrderItems.Item").First(&order, "id = ?", id).Error; err != nil {
@@ -78,6 +90,10 @@ func GetOrder(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	var req models.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -94,12 +110,20 @@ func Login(c *gin.Context) {
 }
 
 func GetOffers(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	var offers []models.Offer
 	database.DB.Find(&offers)
 	c.JSON(http.StatusOK, offers)
 }
 
 func GetLocations(c *gin.Context) {
+	if database.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not connected"})
+		return
+	}
 	var locations []models.Location
 	database.DB.Find(&locations)
 	c.JSON(http.StatusOK, locations)

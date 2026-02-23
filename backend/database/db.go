@@ -15,11 +15,16 @@ var DB *gorm.DB
 
 func InitDB() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found")
+		log.Println("No .env file found, using environment variables")
+	}
+
+	host := os.Getenv("DB_HOST")
+	if host == "" {
+		log.Println("WARNING: DB_HOST is not set")
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s search_path=%s",
-		os.Getenv("DB_HOST"),
+		host,
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
@@ -31,14 +36,19 @@ func InitDB() {
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("DATABASE ERROR: Failed to connect to database: %v", err)
+		return
 	}
 
-	DB.Exec(fmt.Sprintf("CREATE SCHEMA IF NOT EXISTS %s", os.Getenv("DB_SCHEMA")))
+	schema := os.Getenv("DB_SCHEMA")
+	if schema != "" {
+		DB.Exec(fmt.Sprintf("CREATE SCHEMA IF NOT EXISTS %s", schema))
+	}
 
 	err = DB.AutoMigrate(&models.Item{}, &models.Order{}, &models.OrderItem{}, &models.User{}, &models.Offer{}, &models.Location{})
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("MIGRATION ERROR: %v", err)
+		return
 	}
 
 	seedData()
