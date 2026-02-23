@@ -9,6 +9,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [sortBy, setSortBy] = useState<string | null>(null);
     const { addToCart, cart } = useCart();
 
     useEffect(() => {
@@ -50,8 +51,17 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
             }
         }
 
+        // Sort logic
+        if (sortBy) {
+            if (sortBy === 'Price: Low to High') {
+                result.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'Price: High to Low') {
+                result.sort((a, b) => b.price - a.price);
+            }
+        }
+
         return result;
-    }, [items, searchQuery, activeFilter]);
+    }, [items, searchQuery, activeFilter, sortBy]);
 
     return (
         <div className="min-h-screen">
@@ -130,12 +140,26 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                             key={filter}
                             onClick={() => setActiveFilter(activeFilter === filter ? null : filter)}
                             className={`px-4 py-2 border rounded-full text-sm font-medium transition-all duration-200 ${activeFilter === filter
-                                    ? 'bg-swiggy-dark text-white border-swiggy-dark shadow-md'
-                                    : 'border-gray-300 hover:bg-gray-100 text-swiggy-light'
+                                ? 'bg-swiggy-dark text-white border-swiggy-dark shadow-md'
+                                : 'border-gray-300 hover:bg-gray-100 text-swiggy-light'
                                 }`}
                         >
                             {filter}
                             {activeFilter === filter && <X className="inline-block ml-2 w-3 h-3" />}
+                        </button>
+                    ))}
+                    <div className="h-10 w-px bg-gray-200 mx-2" />
+                    {['Price: Low to High', 'Price: High to Low'].map(sort => (
+                        <button
+                            key={sort}
+                            onClick={() => setSortBy(sortBy === sort ? null : sort)}
+                            className={`px-4 py-2 border rounded-full text-sm font-medium transition-all duration-200 ${sortBy === sort
+                                ? 'bg-primary-500 text-white border-primary-500 shadow-md'
+                                : 'border-gray-300 hover:bg-gray-100 text-swiggy-light'
+                                }`}
+                        >
+                            {sort}
+                            {sortBy === sort && <X className="inline-block ml-2 w-3 h-3" />}
                         </button>
                     ))}
                 </div>
@@ -190,6 +214,7 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                             onClick={() => {
                                 setSearchQuery('');
                                 setActiveFilter(null);
+                                setSortBy(null);
                             }}
                             className="mt-8 text-primary-500 font-bold border-b-2 border-primary-500 pb-1"
                         >
