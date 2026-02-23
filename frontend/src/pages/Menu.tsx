@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getMenu } from '../api/client';
 import { Item } from '../types';
 import { useCart } from '../context/CartContext';
-import { ShoppingBag, Plus, Star, Clock } from 'lucide-react';
+import { ShoppingCart, Search, User, ChevronDown, Percent } from 'lucide-react';
 
 export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
     const [items, setItems] = useState<Item[]>([]);
@@ -15,81 +15,92 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
-        <div className="min-h-screen pb-20 animate-fade-in">
-            <header className="sticky top-0 z-50 glass px-6 py-4 mb-8">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
-                            <ShoppingBag className="w-6 h-6 text-white" />
+        <div className="min-h-screen">
+            {/* Navigation Header */}
+            <nav className="sticky top-0 z-50 bg-white shadow-md h-20 flex items-center">
+                <div className="max-content w-full flex justify-between items-center">
+                    <div className="flex items-center gap-8">
+                        <svg className="w-12 h-14 hover:scale-110 transition-transform cursor-pointer" viewBox="0 0 541 771">
+                            <path fill="#FC8019" d="M304 771c-223 0-304-162-304-334 0-165 74-323 209-405C235 15 264 0 300 0c149 0 241 83 241 334 0 165-71 310-237 437z" />
+                            <path fill="#FFF" d="M301 645c-112 0-155-83-155-171 0-83 38-164 107-207 13-8 27-16 45-16 77 0 124 43 124 171 0 83-36 158-121 223z" />
+                        </svg>
+                        <div className="flex items-center gap-2 group cursor-pointer border-b-2 border-transparent hover:border-primary-500 pb-1">
+                            <span className="font-bold text-sm text-swiggy-dark">Home</span>
+                            <span className="text-swiggy-light text-sm truncate max-w-[200px]">Bengaluru, Karnataka, India</span>
+                            <ChevronDown className="w-4 h-4 text-primary-500" />
                         </div>
-                        <h1 className="text-2xl font-black text-slate-950 tracking-tight">FoodDash</h1>
                     </div>
 
-                    <button
-                        onClick={onGoToCart}
-                        className="group relative flex items-center gap-3 bg-slate-950 text-white px-5 py-2.5 rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-950/20"
-                    >
-                        <span className="font-bold text-sm uppercase tracking-wider">View Cart</span>
-                        <div className="relative">
-                            <ShoppingBag className="w-5 h-5" />
-                            {cartCount > 0 && (
-                                <span className="absolute -top-3 -right-3 bg-primary-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 group-hover:scale-110 transition-transform">
-                                    {cartCount}
-                                </span>
-                            )}
+                    <div className="flex items-center gap-10">
+                        <div className="flex items-center gap-3 text-swiggy-dark font-medium hover:text-primary-500 cursor-pointer">
+                            <Search className="w-5 h-5" />
+                            <span>Search</span>
                         </div>
-                    </button>
+                        <div className="flex items-center gap-3 text-swiggy-dark font-medium hover:text-primary-500 cursor-pointer">
+                            <Percent className="w-5 h-5" />
+                            <span>Offers</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-swiggy-dark font-medium hover:text-primary-500 cursor-pointer">
+                            <User className="w-5 h-5" />
+                            <span>Sign In</span>
+                        </div>
+                        <div
+                            onClick={onGoToCart}
+                            className="flex items-center gap-3 text-swiggy-dark font-medium hover:text-primary-500 cursor-pointer text-primary-500"
+                        >
+                            <div className="relative">
+                                <ShoppingCart className="w-5 h-5" />
+                                {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-primary-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{cartCount}</span>}
+                            </div>
+                            <span>Cart</span>
+                        </div>
+                    </div>
                 </div>
-            </header>
+            </nav>
 
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="mb-12">
-                    <h2 className="text-4xl font-black text-slate-950 mb-3 tracking-tight">Discover Deliciousness</h2>
-                    <p className="text-slate-500 font-medium">Hand-picked flavors delivered straight to your doorstep.</p>
+            {/* Hero / Filter Section */}
+            <div className="max-content mt-8 pb-12 border-b border-gray-200">
+                <h2 className="text-2xl font-bold mb-6">Restaurants with online food delivery</h2>
+                <div className="flex gap-4">
+                    {['Filter', 'Sort By', 'Fast Delivery', 'New on Swiggy', 'Ratings 4.0+', 'Pure Veg', 'Offers', 'Rs. 300-Rs. 600', 'Less than Rs. 300'].map(filter => (
+                        <button key={filter} className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">
+                            {filter}
+                        </button>
+                    ))}
                 </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {items.map((item, idx) => (
+            {/* Grid Listing */}
+            <div className="max-content py-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                    {items.map((item) => (
                         <div
                             key={item.id}
-                            className="group bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-premium hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 animate-slide-up"
-                            style={{ animationDelay: `${idx * 100}ms` }}
+                            className="group cursor-pointer flex flex-col transition-all duration-200"
                         >
-                            <div className="relative h-64 overflow-hidden">
-                                <img
-                                    src={item.image_url}
-                                    alt={item.name}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute top-4 left-4 flex gap-2">
-                                    <span className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-1.5 shadow-sm">
-                                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" /> 4.9
-                                    </span>
-                                    <span className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-1.5 shadow-sm">
-                                        <Clock className="w-3 h-3 text-primary-500" /> 20-30 min
-                                    </span>
+                            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:scale-95 transition-transform">
+                                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent p-4 flex items-end">
+                                    <span className="text-white font-black text-xl uppercase tracking-tighter">Items at ${item.price}</span>
                                 </div>
                             </div>
 
-                            <div className="p-8">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h3 className="text-xl font-extrabold text-slate-950 leading-tight group-hover:text-primary-600 transition-colors">
-                                        {item.name}
-                                    </h3>
-                                    <span className="text-lg font-black text-slate-950">
-                                        ${item.price.toFixed(2)}
-                                    </span>
+                            <div className="px-2">
+                                <h3 className="text-lg font-bold text-swiggy-dark truncate mb-1">{item.name}</h3>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
+                                        <Star className="w-3 h-3 text-white fill-white" />
+                                    </div>
+                                    <span className="font-bold text-swiggy-dark text-sm">4.3 • 20-25 mins</span>
                                 </div>
-
-                                <p className="text-slate-400 text-sm font-medium mb-8 line-clamp-2 leading-relaxed">
-                                    {item.description}
-                                </p>
-
+                                <p className="text-swiggy-light text-sm truncate mb-4">{item.description}</p>
                                 <button
-                                    onClick={() => addToCart(item)}
-                                    className="w-full group/btn relative flex items-center justify-center gap-2 bg-slate-50 text-slate-950 py-4 rounded-2xl font-bold border border-slate-100 hover:bg-primary-600 hover:text-white hover:border-primary-600 hover:shadow-lg hover:shadow-primary-600/30 transition-all duration-300"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        addToCart(item);
+                                    }}
+                                    className="w-full py-2 bg-white border-2 border-gray-200 text-green-600 font-bold rounded-lg hover:bg-green-50 hover:border-green-200 transition-all uppercase text-sm tracking-wide"
                                 >
-                                    <Plus className="w-5 h-5 transition-transform group-hover/btn:rotate-90" />
                                     Add to Cart
                                 </button>
                             </div>
@@ -98,5 +109,13 @@ export default function Menu({ onGoToCart }: { onGoToCart: () => void }) {
                 </div>
             </div>
         </div>
+    );
+}
+
+function Star({ className }: { className?: string }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
+        </svg>
     );
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Basis+Grotesque+Pro:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,32 +6,32 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-white text-swiggy-dark antialiased;
+    font-family: 'Basis Grotesque Pro', sans-serif;
   }
 }
 
-.glass {
-  @apply bg-white/70 backdrop-blur-lg border border-white/20;
+.max-content {
+  @apply max-w-[1200px] mx-auto px-4;
 }
 
-.shadow-premium {
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05),
-    0 20px 25px -5px rgba(0, 0, 0, 0.05);
+.swiggy-card-shadow {
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
-.btn-primary {
-  @apply bg-primary-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 hover:shadow-primary-600/40 active:scale-[0.98] transition-all duration-200;
+.swiggy-card-shadow:hover {
+  transform: scale(0.95);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btn-swiggy {
+  @apply bg-primary-500 text-white px-8 py-3 font-bold uppercase tracking-tight hover:bg-primary-600 transition-all duration-200 active:scale-95;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+  @apply bg-swiggy-gray/30 rounded-full;
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { createOrder } from '../api/client';
-import { Minus, Plus, Trash2, ArrowLeft, ShieldCheck, MapPin, Phone, User } from 'lucide-react';
+import { Trash2, MapPin, Receipt, Wallet, User, Phone } from 'lucide-react';
 
 export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; onOrderPlaced: (orderId: string) => void }) {
     const { cart, total, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -12,7 +12,6 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (cart.length === 0) return;
-
         setIsLoading(true);
         setError('');
 
@@ -26,7 +25,7 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
             clearCart();
             onOrderPlaced(order.id);
         } catch (err: any) {
-            setError(err.response?.data?.error || 'Validation failed. Check details.');
+            setError(err.response?.data?.error || 'Order placement failed');
         } finally {
             setIsLoading(false);
         }
@@ -34,144 +33,145 @@ export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; on
 
     if (cart.length === 0) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in">
-                <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-                    <Trash2 className="w-10 h-10 text-slate-300" />
-                </div>
-                <h2 className="text-3xl font-black text-slate-950 mb-3">Your cart is empty</h2>
-                <p className="text-slate-500 mb-8 max-w-sm">Looks like you haven't added anything to your cart yet.</p>
-                <button onClick={onBack} className="btn-primary">
-                    Explore Menu
-                </button>
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+                <div className="w-80 h-80 bg-[url('https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/2xempty_cart_ybi7ss')] bg-contain bg-no-repeat bg-center mb-6" />
+                <h2 className="text-xl font-bold text-swiggy-dark mb-2">Your cart is empty</h2>
+                <p className="text-gray-400 text-sm mb-8">You can go to home page to view more restaurants</p>
+                <button onClick={onBack} className="btn-swiggy">See Restaurants Near You</button>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen max-w-7xl mx-auto p-6 md:p-12 animate-fade-in">
-            <button
-                onClick={onBack}
-                className="group flex items-center gap-3 text-slate-500 mb-12 hover:text-slate-950 transition-colors font-bold uppercase tracking-widest text-xs"
-            >
-                <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-slate-950 transition-colors">
-                    <ArrowLeft className="w-4 h-4" />
-                </div>
-                Back to Menu
-            </button>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                <div className="lg:col-span-7">
-                    <h2 className="text-4xl font-black text-slate-950 mb-10 tracking-tight">Your Order</h2>
-                    <div className="space-y-6">
-                        {cart.map((item) => (
-                            <div key={item.id} className="group flex items-center gap-6 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-premium hover:border-primary-100 transition-all">
-                                <div className="relative w-24 h-24 flex-shrink-0">
-                                    <img src={item.image_url} alt={item.name} className="w-full h-full object-cover rounded-2xl" />
+        <div className="min-h-screen bg-[#e9ede3] py-10 px-4">
+            <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Section: Account & Address */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white p-10 relative">
+                        <div className="absolute left-0 top-10 flex flex-col items-center">
+                            <div className="w-10 h-10 bg-swiggy-dark flex items-center justify-center text-white shadow-lg">
+                                <User className="w-5 h-5" />
+                            </div>
+                            <div className="h-full w-0.5 bg-gray-100 mt-2" />
+                        </div>
+                        <div className="ml-8">
+                            <h2 className="text-xl font-bold mb-2">Account</h2>
+                            <p className="text-gray-500 mb-8">To place your order now, please log in to your existing account or sign up.</p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="border border-swiggy-dark p-4 flex flex-col items-center justify-center">
+                                    <span className="text-swiggy-dark font-bold">LOG IN</span>
+                                    <span className="text-xs text-gray-400 font-medium">Have an account?</span>
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="text-lg font-black text-slate-950 mb-1">{item.name}</h4>
-                                    <p className="text-primary-600 font-bold">${item.price.toFixed(2)}</p>
-                                </div>
-                                <div className="flex flex-col items-end gap-3">
-                                    <div className="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-100">
-                                        <button
-                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition-colors"
-                                        >
-                                            <Minus className="w-4 h-4" />
-                                        </button>
-                                        <span className="w-10 text-center font-bold text-slate-950">{item.quantity}</span>
-                                        <button
-                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                            className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition-colors"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                    <button onClick={() => removeFromCart(item.id)} className="text-slate-300 hover:text-primary-600 transition-colors">
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                <div className="bg-swiggy-dark p-4 flex flex-col items-center justify-center">
+                                    <span className="text-white font-bold">SIGN UP</span>
+                                    <span className="text-xs text-gray-300 font-medium">New to Swiggy?</span>
                                 </div>
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
 
-                <div className="lg:col-span-5">
-                    <div className="sticky top-12 bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-premium">
-                        <h2 className="text-2xl font-black text-slate-950 mb-8">Checkout Details</h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="space-y-4">
-                                <div className="relative">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <div className="bg-white p-10 relative">
+                        <div className="absolute left-0 top-10 flex flex-col items-center">
+                            <div className="w-10 h-10 bg-swiggy-dark flex items-center justify-center text-white shadow-lg">
+                                <MapPin className="w-5 h-5" />
+                            </div>
+                        </div>
+                        <div className="ml-8">
+                            <h2 className="text-xl font-bold mb-8">Delivery Address</h2>
+                            <form id="order-form" onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
+                                <div className="border-2 border-gray-100 p-6 rounded-md hover:shadow-md transition-shadow">
                                     <input
                                         required
                                         type="text"
+                                        placeholder="Full Name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
-                                        placeholder="Full Name"
+                                        className="w-full mb-4 border-b border-gray-200 py-2 outline-none focus:border-primary-500 font-medium"
                                     />
-                                </div>
-                                <div className="relative">
-                                    <MapPin className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
-                                    <textarea
-                                        required
-                                        value={formData.address}
-                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
-                                        placeholder="Delivery Address"
-                                        rows={3}
-                                    />
-                                </div>
-                                <div className="relative">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                     <input
                                         required
                                         type="tel"
+                                        placeholder="Mobile Number"
                                         value={formData.phone}
                                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                        className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 outline-none transition-all font-semibold"
-                                        placeholder="Phone Number"
+                                        className="w-full mb-4 border-b border-gray-200 py-2 outline-none focus:border-primary-500 font-medium"
+                                    />
+                                    <textarea
+                                        required
+                                        placeholder="Delivery Address"
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        className="w-full border-b border-gray-200 py-2 outline-none focus:border-primary-500 font-medium resize-none"
+                                        rows={2}
                                     />
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Section: Bill Summary */}
+                <div className="lg:col-span-1">
+                    <div className="bg-white p-8">
+                        <div className="flex items-center gap-4 mb-6">
+                            <img src={cart[0].image_url} className="w-14 h-14 object-cover" />
+                            <div>
+                                <h3 className="font-bold text-lg mb-1">{cart[0].name}</h3>
+                                <p className="text-xs text-gray-400">Selected Items</p>
                             </div>
+                        </div>
 
-                            <div className="pt-6 border-t border-slate-100 space-y-4">
-                                <div className="flex justify-between text-slate-500 font-bold uppercase tracking-wider text-xs">
-                                    <span>Subtotal</span>
-                                    <span>${total.toFixed(2)}</span>
+                        <div className="space-y-4 max-h-[300px] overflow-y-auto mb-6 pr-2">
+                            {cart.map(item => (
+                                <div key={item.id} className="flex justify-between items-center text-sm font-medium">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border border-green-600 flex items-center justify-center">
+                                            <div className="w-2 h-2 bg-green-600 rounded-full" />
+                                        </div>
+                                        <span className="text-gray-600">{item.name}</span>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center border border-gray-300">
+                                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 text-gray-400">-</button>
+                                            <span className="px-2 text-green-600 font-bold">{item.quantity}</span>
+                                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 text-green-600">+</button>
+                                        </div>
+                                        <span>₹{item.price * item.quantity}</span>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between text-slate-500 font-bold uppercase tracking-wider text-xs">
-                                    <span>Delivery</span>
-                                    <span>FREE</span>
-                                </div>
-                                <div className="flex justify-between text-2xl font-black text-slate-950 pt-2">
-                                    <span>Total</span>
-                                    <span className="text-primary-600">${total.toFixed(2)}</span>
-                                </div>
+                            ))}
+                        </div>
+
+                        <div className="space-y-3 pt-6 border-t border-gray-100">
+                            <h4 className="font-bold text-sm tracking-tight mb-4">Bill Details</h4>
+                            <div className="flex justify-between text-xs text-swiggy-light font-medium">
+                                <span>Item Total</span>
+                                <span>₹{total.toFixed(2)}</span>
                             </div>
-
-                            {error && (
-                                <div className="bg-primary-50 border border-primary-100 p-4 rounded-2xl text-primary-700 text-sm font-bold flex items-center gap-3">
-                                    <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
-                                    {error}
-                                </div>
-                            )}
-
-                            <button
-                                disabled={isLoading}
-                                type="submit"
-                                className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-slate-950/20 active:scale-[0.98]"
-                            >
-                                {isLoading ? 'Processing...' : 'Complete Purchase'}
-                            </button>
-
-                            <div className="flex items-center justify-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest pt-4">
-                                <ShieldCheck className="w-4 h-4" />
-                                Secure Checkout Powered by FoodDash
+                            <div className="flex justify-between text-xs text-swiggy-light font-medium">
+                                <span>Delivery Fee • 3.2 kms</span>
+                                <span>₹40</span>
                             </div>
-                        </form>
+                            <div className="flex justify-between text-xs text-swiggy-light font-medium border-b border-gray-100 pb-4">
+                                <span>Platform fee</span>
+                                <span>₹7.00</span>
+                            </div>
+                            <div className="flex justify-between text-base font-bold text-swiggy-dark pt-2">
+                                <span>TO PAY</span>
+                                <span>₹{(total + 47).toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        {error && <p className="text-red-500 text-xs mt-4 font-bold">{error}</p>}
+
+                        <button
+                            form="order-form"
+                            disabled={isLoading}
+                            type="submit"
+                            className="w-full mt-8 bg-green-600 text-white py-4 font-bold rounded-sm hover:shadow-lg transition-all disabled:opacity-50"
+                        >
+                            {isLoading ? 'PROCESSING...' : 'PROCEED TO PAY'}
+                        </button>
                     </div>
                 </div>
             </div>

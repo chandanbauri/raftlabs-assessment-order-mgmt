@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getOrder } from '../api/client';
 import { Order } from '../types';
-import { Package, Clock, Truck, CheckCircle2, ArrowLeft, Loader2, MapPin, FileText } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Phone, MessageCircle, Star } from 'lucide-react';
 
 export default function Tracking({ orderId, onBack }: { orderId: string; onBack: () => void }) {
     const [order, setOrder] = useState<Order | null>(null);
@@ -28,125 +28,106 @@ export default function Tracking({ orderId, onBack }: { orderId: string; onBack:
     }, [orderId]);
 
     const steps = [
-        { label: 'Order Received', icon: Package, key: 'Order Received', desc: 'We have received your order' },
-        { label: 'Preparing', icon: Clock, key: 'Preparing', desc: 'Our chef is preparing your meal' },
-        { label: 'Out for Delivery', icon: Truck, key: 'Out for Delivery', desc: 'Your food is on the way' },
-        { label: 'Delivered', icon: CheckCircle2, key: 'Delivered', desc: 'Enjoy your meal!' },
+        { label: 'Order Received', key: 'Order Received', time: 'Received' },
+        { label: 'Out for Delivery', key: 'Out for Delivery', time: 'In progress' },
+        { label: 'Delivered', key: 'Delivered', time: 'Enjoy' },
     ];
 
     const currentStepIndex = steps.findIndex((s) => s.key === status);
 
-    if (!order) return (
-        <div className="min-h-screen flex items-center justify-center">
-            <Loader2 className="w-10 h-10 text-primary-600 animate-spin" />
-        </div>
-    );
+    if (!order) return <div className="h-screen flex items-center justify-center font-bold text-swiggy-light">Updating status...</div>;
 
     return (
-        <div className="min-h-screen max-w-4xl mx-auto p-6 md:p-12 animate-fade-in">
-            <button
-                onClick={onBack}
-                className="group flex items-center gap-3 text-slate-500 mb-12 hover:text-slate-950 transition-colors font-bold uppercase tracking-widest text-xs"
-            >
-                <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-slate-950 transition-colors">
-                    <ArrowLeft className="w-4 h-4" />
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            {/* Header */}
+            <div className="bg-white shadow-sm p-4 sticky top-0 z-10">
+                <div className="max-w-[1240px] mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                        <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
+                            <ArrowLeft className="w-6 h-6" />
+                        </button>
+                        <h1 className="text-xl font-bold tracking-tight">Order Status</h1>
+                    </div>
+                    <span className="text-swiggy-light text-sm font-bold">HELP</span>
                 </div>
-                Back to Menu
-            </button>
+            </div>
 
-            <div className="grid grid-cols-1 gap-12">
-                <div className="bg-white rounded-[3rem] p-10 md:p-16 border border-slate-100 shadow-premium relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-full blur-3xl -mr-32 -mt-32 -z-10 opacity-50" />
-
-                    <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
-                        <div className="text-center md:text-left">
-                            <span className="bg-primary-50 text-primary-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block">
-                                Live Tracking
-                            </span>
-                            <h2 className="text-4xl font-black text-slate-950 tracking-tight">#{order.id.slice(0, 8).toUpperCase()}</h2>
-                        </div>
-                        <div className="bg-slate-50 px-8 py-4 rounded-[1.5rem] border border-slate-100 text-center">
-                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Estimated Arrival</p>
-                            <p className="text-xl font-black text-slate-950">25 - 35 min</p>
+            <div className="max-w-[800px] mx-auto w-full p-6 space-y-6">
+                {/* Estimated Time Card */}
+                <div className="bg-white p-8 rounded-lg shadow-sm flex justify-between items-center relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-2 h-full bg-primary-500" />
+                    <div>
+                        <h2 className="text-3xl font-black mb-1">25 MINS</h2>
+                        <p className="text-swiggy-light font-medium text-sm">Estimated delivery for #{order.id.slice(0, 8).toUpperCase()}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center animate-bounce">
+                            <Clock className="w-6 h-6 text-swiggy-dark" />
                         </div>
                     </div>
+                </div>
 
-                    <div className="relative pt-8 pb-12">
-                        <div className="absolute top-[3.7rem] left-0 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-primary-600 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(239,68,68,0.5)]"
-                                style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
-                            />
-                        </div>
+                {/* Tracker */}
+                <div className="bg-white p-8 rounded-lg shadow-sm">
+                    <div className="space-y-12 relative">
+                        {/* Vertical Line */}
+                        <div className="absolute left-[11px] top-2 bottom-2 w-1 bg-gray-100" />
 
-                        <div className="relative flex justify-between items-start">
-                            {steps.map((step, index) => {
-                                const Icon = step.icon;
-                                const isCompleted = index <= currentStepIndex;
-                                const isCurrent = index === currentStepIndex;
-
-                                return (
-                                    <div key={step.key} className="flex flex-col items-center max-w-[120px] text-center">
-                                        <div
-                                            className={`w-16 h-16 rounded-3xl flex items-center justify-center border-4 transition-all duration-700 ${isCompleted
-                                                ? 'bg-primary-600 border-primary-100 text-white shadow-xl shadow-primary-200 scale-110 z-10'
-                                                : 'bg-white border-slate-50 text-slate-200'
-                                                }`}
-                                        >
-                                            <Icon className={`w-7 h-7 ${isCurrent ? 'animate-pulse' : ''}`} />
-                                        </div>
-                                        <div className="mt-6 space-y-1 px-2">
-                                            <p className={`text-xs font-black uppercase tracking-wider ${isCompleted ? 'text-slate-950' : 'text-slate-400'}`}>
-                                                {step.label}
-                                            </p>
-                                            {isCurrent && (
-                                                <p className="text-[10px] text-slate-400 font-medium leading-tight">
-                                                    {step.desc}
-                                                </p>
-                                            )}
-                                        </div>
+                        {steps.map((step, index) => {
+                            const active = index <= currentStepIndex;
+                            return (
+                                <div key={step.key} className="flex items-start gap-8 relative z-10">
+                                    <div className={`w-6 h-6 rounded-full border-4 border-white ${active ? 'bg-orange-500 scale-125' : 'bg-gray-200'} transition-all`} />
+                                    <div>
+                                        <h3 className={`text-lg font-bold ${active ? 'text-swiggy-dark' : 'text-gray-300'}`}>{status === step.key ? 'Your food is ' + step.label.toLowerCase() : step.label}</h3>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{step.time}</p>
                                     </div>
-                                );
-                            })}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Delivery Partner */}
+                <div className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-swiggy-gray/10 rounded-full flex items-center justify-center overflow-hidden">
+                            <img src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_100,h_100,c_fill/delivery-partner-v2" alt="Partner" />
+                        </div>
+                        <div>
+                            <h4 className="font-bold">Rahul Mishra</h4>
+                            <div className="flex items-center gap-1">
+                                <Star className="w-3 h-3 text-gray-400 fill-gray-400" />
+                                <span className="text-xs text-gray-400 font-medium">4.8 Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <div className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                            <Phone className="w-4 h-4 text-swiggy-dark" />
+                        </div>
+                        <div className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                            <MessageCircle className="w-4 h-4 text-swiggy-dark" />
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-premium">
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center">
-                                <MapPin className="w-5 h-5 text-white" />
-                            </div>
-                            <h3 className="font-black text-slate-950 text-xl tracking-tight">Delivery Address</h3>
+                {/* Address & Bill */}
+                <div className="bg-white p-8 rounded-lg shadow-sm">
+                    <div className="flex gap-2 mb-6">
+                        <MapPin className="w-5 h-5 text-gray-400" />
+                        <div>
+                            <h4 className="font-bold text-sm mb-1">Delivering to</h4>
+                            <p className="text-xs text-gray-400 font-medium leading-relaxed">{order.customer_address}</p>
                         </div>
-                        <p className="text-slate-600 font-bold mb-1">{order.customer_name}</p>
-                        <p className="text-slate-400 font-medium leading-relaxed">{order.customer_address}</p>
-                        <p className="text-slate-400 font-medium mt-2">{order.customer_phone}</p>
                     </div>
-
-                    <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-premium">
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center">
-                                <FileText className="w-5 h-5 text-white" />
+                    <div className="border-t border-gray-100 pt-6">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h4 className="font-bold text-sm mb-1">{order.order_items.length} ITEM(S)</h4>
+                                <p className="text-xs text-swiggy-dark font-black tracking-tighter">Total Amount: ₹{(order.total_price + 47).toFixed(2)}</p>
                             </div>
-                            <h3 className="font-black text-slate-950 text-xl tracking-tight">Order Details</h3>
-                        </div>
-                        <div className="space-y-4">
-                            {order.order_items.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center group">
-                                    <span className="text-slate-500 font-bold text-sm">
-                                        <span className="text-primary-600 mr-2">{item.quantity}x</span> {item.item.name}
-                                    </span>
-                                    <span className="font-extrabold text-slate-950 text-sm group-hover:text-primary-600 transition-colors">
-                                        ${(item.price * item.quantity).toFixed(2)}
-                                    </span>
-                                </div>
-                            ))}
-                            <div className="pt-6 mt-2 border-t border-slate-50 flex justify-between items-center">
-                                <span className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Total Amount</span>
-                                <span className="text-3xl font-black text-primary-600">${order.total_price.toFixed(2)}</span>
-                            </div>
+                            <span className="text-xs font-bold text-primary-500 uppercase cursor-pointer hover:underline">View Receipt</span>
                         </div>
                     </div>
                 </div>
