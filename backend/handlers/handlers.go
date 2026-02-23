@@ -1,0 +1,88 @@
+package handlers
+
+import (
+	"net/http"
+	"order-mgmt-backend/database"
+	"order-mgmt-backend/models"
+	"order-mgmt-backend/websocket"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetMenu(c *gin.Context) {
+	var items []models.Item
+	database.DB.Find(&items)
+	c.JSON(http.StatusOK, items)
+}
+
+func CreateOrder(c *gin.Context) {
+	var req models.CreateOrderRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !isValidPhone(req.CustomerPhone) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid phone number format"})
+		return
+	}
+
+	order := models.NewOrder()
+	order.CustomerName = req.CustomerName
+	order.CustomerAddress = req.CustomerAddress
+	order.CustomerPhone = req.CustomerPhone
+
+	var totalPrice float64
+	for _, itemReq := range req.Items {
+		var item models.Item
+		if err := database.DB.First(&item, itemReq.ItemID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Item not found"})
+			return
+		}
+
+		orderItem := models.OrderItem{
+			OrderID:  order.ID,
+			ItemID:   item.ID,
+			Quantity: itemReq.Quantity,
+			Price:    item.Price,
+		}
+		order.OrderItems = append(order.OrderItems, orderItem)
+		totalPrice += item.Price * float64(itemReq.Quantity)
+	}
+	order.TotalPrice = totalPrice
+
+	if err := database.DB.Create(&order).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
+		return
+	}
+
+	go simulateOrderStatus(order.ID)
+
+	c.JSON(http.StatusCreated, order)
+}
+
+func GetOrder(c *gin.Context) {
+	id := c.Param("id")
+	var order models.Order
+	if err := database.DB.Preload("OrderItems.Item").First(&order, "id = ?", id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	c.JSON(http.StatusOK, order)
+}
+
+func simulateOrderStatus(orderID string) {
+	statuses := []string{"Preparing", "Out for Delivery", "Delivered"}
+	interval := 40 * time.Second
+
+	for _, status := range statuses {
+		time.Sleep(interval)
+		database.DB.Model(&models.Order{}).Where("id = ?", orderID).Update("status", status)
+		websocket.GlobalHub.BroadcastStatus(orderID, status)
+	}
+}
+
+func isValidPhone(phone string) bool {
+	return len(phone) >= 10 && len(phone) <= 15
+}
