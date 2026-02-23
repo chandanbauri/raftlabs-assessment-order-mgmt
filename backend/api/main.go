@@ -32,6 +32,9 @@ func initEngine() {
 	}))
 
 	// Routes
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		c.AbortWithStatus(http.StatusNoContent)
+	})
 	r.GET("/api/menu", handlers.GetMenu)
 	r.POST("/api/orders", handlers.CreateOrder)
 	r.GET("/api/orders/:id", handlers.GetOrder)
