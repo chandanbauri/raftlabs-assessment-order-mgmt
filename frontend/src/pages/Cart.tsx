@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../api/client';
-import { Trash2, MapPin, Receipt, Wallet, User, Phone, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
+import { MapPin, Receipt, Wallet, User, Phone, CheckCircle2, ChevronRight, Loader2, Percent } from 'lucide-react';
 
 export default function Cart({ onBack, onOrderPlaced }: { onBack: () => void; onOrderPlaced: (orderId: string) => void }) {
     const { cart, total, updateQuantity, clearCart } = useCart();
     const { user, isAuthenticated } = useAuth();
-    const [formData, setFormData] = useState({
+    const [formData] = useState({
         name: user?.name || '',
         address: 'Indiranagar, Bengaluru, 560038',
         phone: '9876543210'
